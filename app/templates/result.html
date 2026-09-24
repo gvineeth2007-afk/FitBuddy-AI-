@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-heading">
+  <span class="eyebrow">{{ "UPDATED PLAN" if updated else "YOUR PLAN" }}</span>
+  <h1>{{ user.name }}'s FitBuddy plan</h1>
+  <p>{{ user.goal.replace("_", " ").title() }} · {{ user.intensity.title() }} intensity · {{ user.weight_kg }} kg</p>
+</div>
+
+{% if message %}<div class="success">{{ message }}</div>{% endif %}
+
+<section class="card">
+  <h2>{{ workout_plan.title }}</h2>
+  <p>{{ workout_plan.summary }}</p>
+</section>
+
+<section class="days">
+{% for day in workout_plan.days %}
+  <article class="day card">
+    <div class="day-header"><span>{{ day.day }}</span><h2>{{ day.focus }}</h2></div>
+    <h3>Warm-up</h3>
+    <ul>{% for item in day.warmup %}<li>{{ item }}</li>{% endfor %}</ul>
+    <h3>Main workout</h3>
+    <div class="exercise-list">
+      {% for ex in day.exercises %}
+      <div class="exercise"><strong>{{ ex.name }}</strong><span>{{ ex.sets }} sets · {{ ex.reps_or_duration }} · Rest: {{ ex.rest }}</span></div>
+      {% endfor %}
+    </div>
+    <h3>Cooldown</h3>
+    <ul>{% for item in day.cooldown %}<li>{{ item }}</li>{% endfor %}</ul>
+  </article>
+{% endfor %}
+</section>
+
+<section class="card">
+  <h2>Nutrition & recovery</h2>
+  <p>{{ nutrition_tip.tip }}</p>
+  <p><strong>Recovery:</strong> {{ nutrition_tip.recovery_note }}</p>
+</section>
+
+{% if workout_plan.safety_notes %}
+<section class="notice">
+  <strong>Safety notes</strong>
+  <ul>{% for note in workout_plan.safety_notes %}<li>{{ note }}</li>{% endfor %}</ul>
+</section>
+{% endif %}
+
+<section class="card">
+  <h2>Refine this plan</h2>
+  <p>Tell FitBuddy what you want changed, such as “add more cardio” or “include another rest day.”</p>
+  <form method="post" action="/submit-feedback">
+    <input type="hidden" name="user_id" value="{{ user.user_id }}">
+    <label>Feedback<textarea name="feedback" rows="5" required minlength="3" maxlength="2000" placeholder="I would like more cardio and one extra recovery day."></textarea></label>
+    <button class="button" type="submit">Update Plan with AI</button>
+  </form>
+</section>
+<p><a class="text-link" href="/">Create another plan</a></p>
+{% endblock %}

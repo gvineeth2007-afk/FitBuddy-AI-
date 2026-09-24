@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-heading">
+  <span class="eyebrow">ADMIN</span>
+  <h1>All FitBuddy users</h1>
+  <p>Review stored user profiles and original/revised plans.</p>
+</div>
+
+{% if not records %}<section class="card"><p>No users have been created yet.</p></section>{% endif %}
+
+{% for record in records %}
+<section class="card admin-card">
+  <div class="admin-header">
+    <div><h2>{{ record.user.name }}</h2><p>{{ record.user.user_id }} · Age {{ record.user.age }} · {{ record.user.weight_kg }} kg</p></div>
+    <span class="badge">{{ record.user.goal.replace("_", " ").title() }}</span>
+  </div>
+  {% if record.plan %}
+  <details><summary>Original plan</summary><pre>{{ record.original_plan | tojson(indent=2) }}</pre></details>
+  {% if record.updated_plan %}<details open><summary>Updated plan</summary><pre>{{ record.updated_plan | tojson(indent=2) }}</pre></details>{% endif %}
+  {% else %}<p>No plan stored.</p>{% endif %}
+</section>
+{% endfor %}
+{% endblock %}
